@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, maximum-scale=1, user-scalable=no">
+<title>Lernkarten</title>
+<meta name="theme-color" content="#12151c">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Lernkarten">
+<link rel="manifest" href="manifest.json">
+<link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
+<link rel="icon" href="icons/icon-192.png">
+<link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+<!-- ============ Deck-Auswahl ============ -->
+<section id="screen-decks" class="screen">
+  <header class="head">
+    <h1>Lernkarten</h1>
+    <p class="sub" id="streak-line"></p>
+  </header>
+  <div class="scroll">
+    <ul id="deck-list" class="deck-list"></ul>
+    <div class="import-box">
+      <label class="btn btn-ghost btn-block" for="csv-input">CSV importieren</label>
+      <input type="file" id="csv-input" accept=".csv,text/csv" hidden>
+      <p class="hint">Zwei Spalten: Frage, Antwort. Kopfzeile wird automatisch erkannt.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ============ Modus-Auswahl ============ -->
+<section id="screen-mode" class="screen" hidden>
+  <header class="head">
+    <button class="back" data-back="decks" aria-label="Zurück">‹</button>
+    <h1 id="mode-deck-name">Deck</h1>
+    <p class="sub" id="mode-deck-meta"></p>
+  </header>
+  <div class="scroll">
+    <button class="mode-card" data-mode="swipe">
+      <span class="mode-icon">↔</span>
+      <span class="mode-text"><strong>Blättern</strong><small>Karte umdrehen, wischen: rechts&nbsp;=&nbsp;gewusst, links&nbsp;=&nbsp;nochmal</small></span>
+    </button>
+    <button class="mode-card" data-mode="write">
+      <span class="mode-icon">✎</span>
+      <span class="mode-text"><strong>Schreiben</strong><small>Antwort selbst formulieren oder diktieren, Kernbegriffe werden geprüft</small></span>
+    </button>
+    <div class="mode-opts">
+      <label class="switch"><input type="checkbox" id="opt-onlyagain"><span>Nur die „Nochmal"-Karten (<b id="again-count">0</b>)</span></label>
+      <label class="switch"><input type="checkbox" id="opt-shuffle" checked><span>Mischen</span></label>
+    </div>
+    <button class="btn btn-ghost btn-block" id="btn-reset">Fortschritt dieses Decks zurücksetzen</button>
+  </div>
+</section>
+
+<!-- ============ Lernen ============ -->
+<section id="screen-study" class="screen" hidden>
+  <header class="bar">
+    <button class="back" data-back="mode" aria-label="Zurück">‹</button>
+    <div class="bar-mid">
+      <div class="progress"><i id="progress-fill"></i></div>
+      <span class="counter" id="counter">0 / 0</span>
+    </div>
+    <button class="icon-btn" id="btn-shuffle" aria-label="Neu mischen">⤮</button>
+  </header>
+
+  <div class="stage" id="stage">
+    <div class="card" id="card">
+      <div class="card-face card-front">
+        <p class="card-text" id="card-q"></p>
+        <span class="flip-hint">Tippen zum Umdrehen</span>
+      </div>
+      <div class="card-face card-back">
+        <p class="card-text" id="card-a"></p>
+      </div>
+    </div>
+    <div class="stamp stamp-yes" id="stamp-yes">Gewusst</div>
+    <div class="stamp stamp-no" id="stamp-no">Nochmal</div>
+  </div>
+
+  <div class="write-panel" id="write-panel" hidden>
+    <textarea id="write-input" rows="4" placeholder="Antwort in eigenen Worten – tippen oder über die Mikrofon-Taste diktieren…" autocapitalize="sentences" autocomplete="off"></textarea>
+    <div id="write-feedback" class="feedback" hidden></div>
+    <button class="btn btn-primary btn-block" id="btn-check">Prüfen</button>
+  </div>
+
+  <footer class="actions" id="actions">
+    <button class="icon-btn wide" id="btn-undo" aria-label="Zurück">↶</button>
+    <button class="btn btn-no" id="btn-no">Nochmal</button>
+    <button class="btn btn-yes" id="btn-yes">Gewusst</button>
+  </footer>
+</section>
+
+<!-- ============ Rundenergebnis ============ -->
+<section id="screen-result" class="screen" hidden>
+  <div class="scroll center">
+    <div class="ring" id="ring"><span id="ring-pct">0%</span></div>
+    <h2 id="result-head">Runde beendet</h2>
+    <p class="sub" id="result-sub"></p>
+    <button class="btn btn-primary btn-block" id="btn-again" hidden></button>
+    <button class="btn btn-ghost btn-block" id="btn-restart">Ganzes Deck neu</button>
+    <button class="btn btn-ghost btn-block" data-back="decks">Zur Deck-Auswahl</button>
+  </div>
+</section>
+
+<div id="toast" class="toast" hidden></div>
+
+<script src="decks.js"></script>
+<script src="app.js"></script>
+</body>
+</html>
