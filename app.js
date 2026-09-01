@@ -271,7 +271,10 @@ const card = $("card");
 let drag = null;
 function resetCardPosition() {
   card.style.transition = "";
-  card.style.transform = S.flipped ? "rotateY(180deg)" : "";
+  /* Inline-Transform immer entfernen – ob die Karte gedreht ist,
+     regelt allein die Klasse .flipped. Sonst blockiert ein hier
+     gesetztes rotateY(180deg) das Zurückdrehen. */
+  card.style.transform = "";
   $("stamp-yes").style.opacity = 0;
   $("stamp-no").style.opacity = 0;
 }
