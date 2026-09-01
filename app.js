@@ -278,40 +278,69 @@ function resetCardPosition() {
   $("stamp-yes").style.opacity = 0;
   $("stamp-no").style.opacity = 0;
 }
+/* Auslöse-Schwellen: entweder weit genug gezogen ODER schnell genug
+   geschnippt. Der Flick-Zweig sorgt dafür, dass kurze zackige Bewegungen
+   nicht ins Leere laufen. */
+const SWIPE_DIST = 64;      // px, ruhiges Ziehen
+const FLICK_SPEED = 0.3;    // px/ms – ein echter Finger-Flick liegt bei 1–3
+const FLICK_DIST = 22;      // px, Mindestweg beim Schnippen
+
 card.addEventListener("pointerdown", (e) => {
   if (S.mode === "write" && !S.checked) return;
-  drag = { x: e.clientX, y: e.clientY, dx: 0, dy: 0, t: Date.now() };
+  if (drag) return;                       // zweiter Finger wird ignoriert
+  const now = e.timeStamp || Date.now();
+  drag = { id: e.pointerId, x: e.clientX, y: e.clientY, dx: 0, dy: 0,
+           t: now, lastX: e.clientX, lastT: now, vx: 0 };
   card.style.transition = "none";
-  card.setPointerCapture(e.pointerId);
+  try { card.setPointerCapture(e.pointerId); } catch (err) {}
 });
 card.addEventListener("pointermove", (e) => {
-  if (!drag) return;
+  if (!drag || e.pointerId !== drag.id) return;
+  const now = e.timeStamp || Date.now();
+  const dt = now - drag.lastT;
+  if (dt > 0) {
+    const v = (e.clientX - drag.lastX) / dt;
+    drag.vx = drag.vx * 0.4 + v * 0.6;    // leicht geglättet gegen Zittern
+    drag.lastX = e.clientX; drag.lastT = now;
+  }
   drag.dx = e.clientX - drag.x;
   drag.dy = e.clientY - drag.y;
   const rot = drag.dx / 22;
   card.style.transform =
     "translateX(" + drag.dx + "px) rotate(" + rot + "deg)" + (S.flipped ? " rotateY(180deg)" : "");
-  $("stamp-yes").style.opacity = Math.max(0, Math.min(1, drag.dx / 90));
-  $("stamp-no").style.opacity = Math.max(0, Math.min(1, -drag.dx / 90));
+  $("stamp-yes").style.opacity = Math.max(0, Math.min(1, drag.dx / 55));
+  $("stamp-no").style.opacity = Math.max(0, Math.min(1, -drag.dx / 55));
 });
 function endDrag(e) {
-  if (!drag) return;
+  if (!drag || (e && e.pointerId !== drag.id)) return;
   const d = drag; drag = null;
-  card.style.transition = "";
-  const moved = Math.abs(d.dx) > 12 || Math.abs(d.dy) > 12;
-  if (Math.abs(d.dx) > 90) {
-    flyOut(d.dx > 0);
-    return;
+  const stale = ((e && e.timeStamp) || Date.now()) - d.lastT > 120;
+  const vx = stale ? 0 : d.vx;            // liegengebliebener Finger zählt nicht als Flick
+  window.__lastGesture = { dx: Math.round(d.dx), vx: +vx.toFixed(3), stale: stale };
+  const weit = Math.abs(d.dx) > SWIPE_DIST;
+  const flick = Math.abs(vx) > FLICK_SPEED && Math.abs(d.dx) > FLICK_DIST &&
+                (vx > 0) === (d.dx > 0);
+  if (weit || flick) { flyOut(d.dx > 0); return; }
+
+  card.style.transition = "transform .18s cubic-bezier(.2,.8,.3,1)";
+  resetCardPosition2();
+  const bewegt = Math.abs(d.dx) > 10 || Math.abs(d.dy) > 10;
+  if (!bewegt && ((e && e.timeStamp) || Date.now()) - d.t < 500 && S.mode === "swipe") {
+    setFlipped(!S.flipped);
   }
-  resetCardPosition();
-  if (!moved && Date.now() - d.t < 500 && S.mode === "swipe") setFlipped(!S.flipped);
+}
+/* wie resetCardPosition, aber ohne die Transition zu überschreiben */
+function resetCardPosition2() {
+  card.style.transform = "";
+  $("stamp-yes").style.opacity = 0;
+  $("stamp-no").style.opacity = 0;
 }
 card.addEventListener("pointerup", endDrag);
 card.addEventListener("pointercancel", endDrag);
 
 function flyOut(known) {
   const dir = known ? 1 : -1;
-  card.style.transition = "transform .25s ease-out, opacity .25s ease-out";
+  card.style.transition = "transform .17s ease-out, opacity .17s ease-out";
   card.style.transform = "translateX(" + (dir * window.innerWidth) + "px) rotate(" + (dir * 18) + "deg)";
   card.style.opacity = "0";
   setTimeout(() => {
@@ -319,7 +348,7 @@ function flyOut(known) {
     card.style.opacity = "1";
     rate(known);
     requestAnimationFrame(() => { card.style.transition = ""; });
-  }, 220);
+  }, 150);
 }
 
 /* ============================================================
