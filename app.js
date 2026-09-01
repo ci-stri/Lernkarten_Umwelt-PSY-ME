@@ -147,7 +147,7 @@ function startSession(deck, mode, opts) {
   let idx = deck.cards.map((_, i) => i);
   if (opts.onlyAgain) {
     const again = idx.filter((i) => st.results[i] === "no");
-    if (!again.length) { toast("Keine „Nochmal\"-Karten in diesem Deck."); return false; }
+    if (!again.length) { toast("Keine offenen Karten in diesem Deck."); return false; }
     idx = again;
   }
   if (opts.shuffle) shuffle(idx);
@@ -188,6 +188,11 @@ function renderCard() {
     $("actions").hidden = false;
   }
   $("btn-undo").disabled = S.history.length === 0;
+
+  /* Eintritts-Animation neu anstoßen: Klasse weg, Layout erzwingen, Klasse dran */
+  card.classList.remove("enter");
+  void card.offsetWidth;
+  card.classList.add("enter");
 
   const total = S.queue.length;
   $("counter").textContent = (S.pos + 1) + " / " + total;
@@ -231,7 +236,7 @@ function finishRound() {
   const btn = $("btn-again");
   if (againAll > 0) {
     btn.hidden = false;
-    btn.textContent = "Nur die " + againAll + " „Nochmal\"-Karten";
+    btn.textContent = "Nur die " + againAll + " nicht gewussten Karten";
   } else { btn.hidden = true; }
   show("result");
 }
@@ -340,15 +345,17 @@ card.addEventListener("pointercancel", endDrag);
 
 function flyOut(known) {
   const dir = known ? 1 : -1;
-  card.style.transition = "transform .17s ease-out, opacity .17s ease-out";
-  card.style.transform = "translateX(" + (dir * window.innerWidth) + "px) rotate(" + (dir * 18) + "deg)";
+  card.classList.remove("enter");
+  card.style.transition = "transform .19s cubic-bezier(.4,0,.9,.4), opacity .19s ease-in";
+  card.style.transform = "translateX(" + (dir * window.innerWidth * 0.85) + "px)" +
+                         " rotate(" + (dir * 16) + "deg) scale(.86)";
   card.style.opacity = "0";
   setTimeout(() => {
     card.style.transition = "none";
     card.style.opacity = "1";
-    rate(known);
+    rate(known);                                  // rendert die neue Karte
     requestAnimationFrame(() => { card.style.transition = ""; });
-  }, 150);
+  }, 170);
 }
 
 /* ============================================================
@@ -376,7 +383,7 @@ function renderDecks() {
       '<span class="deck-title">' + escapeHTML(d.name) + "</span>" +
       '<span class="deck-meta"><span>' + d.cards.length + " Karten</span>" +
       (known ? "<span>" + known + " gewusst</span>" : "") +
-      (again ? '<span>' + again + " nochmal</span>" : "") + "</span>" +
+      (again ? '<span>' + again + " nicht gewusst</span>" : "") + "</span>" +
       '<span class="deck-bar"><i style="width:' +
         (d.cards.length ? known / d.cards.length * 100 : 0) + '%"></i></span>';
     b.addEventListener("click", () => openDeck(d));
@@ -407,7 +414,7 @@ function openDeck(d) {
   const known = d.cards.filter((_, i) => st.results[i] === "yes").length;
   $("mode-deck-name").textContent = d.name;
   $("mode-deck-meta").textContent =
-    d.cards.length + " Karten · " + known + " gewusst · " + again + " nochmal";
+    d.cards.length + " Karten · " + known + " gewusst · " + again + " nicht gewusst";
   $("again-count").textContent = again;
   $("opt-onlyagain").checked = false;
   $("opt-onlyagain").disabled = again === 0;
@@ -485,6 +492,14 @@ function toast(msg) {
 
 /* Doppeltipp-Zoom auf iOS unterdrücken */
 document.addEventListener("dblclick", (e) => e.preventDefault(), { passive: false });
+
+/* Kein Pull-to-Refresh und kein Gummiband, wenn man beim Wischen nach unten
+   gerät. Nur dort erlauben, wo der Kartentext wirklich zu scrollen ist. */
+$("stage").addEventListener("touchmove", (e) => {
+  const face = e.target && e.target.closest ? e.target.closest(".card-face") : null;
+  const scrollbar = face && face.scrollHeight > face.clientHeight + 2;
+  if (!scrollbar && e.cancelable) e.preventDefault();
+}, { passive: false });
 
 /* Debug-/Test-Hook (harmlos, wird von der App selbst nicht benutzt) */
 window.LK = { grade: grade, cardsFromCSV: cardsFromCSV, decks: allDecks };

@@ -7,16 +7,16 @@ Enthalten sind die beiden Sets aus `flashcards_11-1.csv` (50 Karten) und
 ## Zwei Modi
 
 **Blättern** – Tippen dreht die Karte um. Wischen nach **rechts = gewusst**,
-nach **links = nochmal**; die beiden Buttons unten machen dasselbe. `↶` nimmt die
+nach **links = nicht gewusst**; die beiden Buttons unten machen dasselbe. `↶` nimmt die
 letzte Bewertung zurück, `⤮` mischt den Reststapel neu. Am Rundenende gibt es die
-Quote und einen Knopf, der nur noch die „Nochmal"-Karten durchgeht.
+Quote und einen Knopf, der nur noch die nicht gewussten Karten durchgeht.
 
 **Schreiben** – Antwort selbst formulieren (auf dem iPhone auch über die
 Mikrofon-Taste der Tastatur diktieren), dann „Prüfen". Die App vergleicht nicht
 Wort für Wort, sondern prüft, ob die **Kernbegriffe** der Karte vorkommen –
 sinngemäß, in beliebiger Formulierung und Reihenfolge, Beugungen und Synonyme
 eingerechnet. Danach kommt die Musterantwort, und du bewertest selbst
-gewusst/nochmal – dein Urteil zählt für den Fortschritt, die Begriffsprüfung ist
+gewusst / nicht gewusst – dein Urteil zählt für den Fortschritt, die Begriffsprüfung ist
 nur das Feedback dazu.
 
 Der Fortschritt liegt pro Deck im `localStorage` des Browsers und bleibt erhalten,
