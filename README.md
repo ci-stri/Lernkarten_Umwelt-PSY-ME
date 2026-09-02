@@ -1,10 +1,19 @@
 # Lernkarten – PWA
 
 Lernkarten aus CSV, offline im Browser. Kein Backend, kein Konto, keine Tracker.
-Enthalten sind drei Sets aus `Umweltpsychologie_Fragenkatalog.md`:
-**Kern** (75 klausurrelevante Karten), **Vertiefung** (82) und **Randthemen** (20).
-Erzeugt werden sie mit `build_decks.py` aus dem Fragenkatalog — die Datei `decks.js`
-wird dabei komplett überschrieben, Änderungen also immer im Katalog vornehmen.
+Die App ist nach **Dachthemen** gegliedert, jedes mit eigenen Kartensätzen:
+
+- **Umweltpsychologie** — Kern (klausurrelevant), Vertiefung, Randthemen
+- **Umweltmediation** — Kern (klausurrelevant), Vertiefung, Randthemen
+- **Mathematik** — Grundformeln erkennen (Kegel, Kugel, Pyramide) und
+  Umstellen (sprechen): die Rechenschritte zum Umstellen einer Formel in
+  Worten erklären
+
+Weitere Dachthemen kommen einfach dazu, ohne dass App-Code sich ändert.
+Erzeugt werden alle eingebauten Sets mit `build_decks.py` aus den jeweiligen
+Fragenkatalogen (`Umweltpsychologie_Fragenkatalog.md`, `Umweltmediation_Fragenkatalog.md`,
+`Mathematik_Fragenkatalog.md`) — die Datei `decks.js` wird dabei komplett
+überschrieben, Änderungen also immer im jeweiligen Katalog vornehmen.
 
 ## Zwei Modi
 
@@ -20,6 +29,12 @@ sinngemäß, in beliebiger Formulierung und Reihenfolge, Beugungen und Synonyme
 eingerechnet. Danach kommt die Musterantwort, und du bewertest selbst
 gewusst / nicht gewusst – dein Urteil zählt für den Fortschritt, die Begriffsprüfung ist
 nur das Feedback dazu.
+
+Für das Set „Umstellen (sprechen)" (Mathematik) ist genau dieser Schreib-Modus
+gedacht: statt der Formel mit Symbolen wird der Rechenweg in Worten diktiert
+oder getippt („Wurzel ziehen", „durch Pi teilen" …) – das lässt sich auf dem
+iPhone per Mikrofon-Taste sprechen und die App prüft die genannten
+Rechenschritte, nicht die Formel-Zeichen selbst.
 
 Der Fortschritt liegt pro Deck im `localStorage` des Browsers und bleibt erhalten,
 bis du ihn im Deck-Menü zurücksetzt.
