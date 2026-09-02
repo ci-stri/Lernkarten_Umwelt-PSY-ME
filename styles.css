@@ -39,6 +39,10 @@ body{
 
 /* ---------- Deckliste ---------- */
 .deck-list{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:12px}
+/* Dachthema als Zwischenüberschrift über seinen Decks */
+.thema{font-size:13px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;
+  color:var(--txt-dim);margin:14px 4px -4px}
+.deck-list .thema:first-child{margin-top:2px}
 .deck{width:100%;text-align:left;background:var(--card);border:1px solid var(--line);
   border-radius:var(--radius);padding:18px;color:inherit;font:inherit;cursor:pointer;
   display:flex;flex-direction:column;gap:10px}

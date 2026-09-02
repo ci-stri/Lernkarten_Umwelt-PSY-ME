@@ -403,7 +403,29 @@ function renderDecks() {
   const ul = $("deck-list");
   ul.innerHTML = "";
   const decks = allDecks();
+
+  /* nach Dachthema gruppieren – eingebaute Themen in ihrer Reihenfolge,
+     importierte Sets ganz unten */
+  const themen = [];
   decks.forEach((d) => {
+    const t = d.thema || (d.custom ? "Eigene Sets" : "Weitere");
+    if (themen.indexOf(t) === -1) themen.push(t);
+  });
+  let letztesThema = null;
+
+  decks.slice().sort((a, b) => {
+    const ta = themen.indexOf(a.thema || (a.custom ? "Eigene Sets" : "Weitere"));
+    const tb = themen.indexOf(b.thema || (b.custom ? "Eigene Sets" : "Weitere"));
+    return ta - tb;
+  }).forEach((d) => {
+    const thema = d.thema || (d.custom ? "Eigene Sets" : "Weitere");
+    if (thema !== letztesThema) {
+      const h = document.createElement("li");
+      h.className = "thema";
+      h.textContent = thema;
+      ul.appendChild(h);
+      letztesThema = thema;
+    }
     const st = deckState(d.id);
     const known = d.cards.filter((_, i) => st.results[i] === "yes").length;
     const again = d.cards.filter((_, i) => st.results[i] === "no").length;
@@ -434,7 +456,8 @@ function renderDecks() {
     ul.appendChild(li);
   });
   const cards = decks.reduce((n, d) => n + d.cards.length, 0);
-  $("streak-line").textContent = decks.length + " Decks · " + cards + " Karten · offline verfügbar";
+  $("streak-line").textContent = themen.length + (themen.length === 1 ? " Thema · " : " Themen · ") +
+                                 cards + " Karten · offline verfügbar";
 }
 
 let pendingDeck = null;
@@ -443,7 +466,7 @@ function openDeck(d) {
   const st = deckState(d.id);
   const again = d.cards.filter((_, i) => st.results[i] === "no").length;
   const known = d.cards.filter((_, i) => st.results[i] === "yes").length;
-  $("mode-deck-name").textContent = d.name;
+  $("mode-deck-name").textContent = (d.thema ? d.thema + " · " : "") + d.name;
   $("mode-deck-meta").textContent =
     d.cards.length + " Karten · " + known + " gewusst · " + again + " nicht gewusst";
   $("again-count").textContent = again;
