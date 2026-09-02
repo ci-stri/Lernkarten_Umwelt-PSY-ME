@@ -1,8 +1,10 @@
 # Lernkarten – PWA
 
 Lernkarten aus CSV, offline im Browser. Kein Backend, kein Konto, keine Tracker.
-Enthalten sind die beiden Sets aus `flashcards_11-1.csv` (50 Karten) und
-`flashcards_11-3.csv` (55 Karten).
+Enthalten sind drei Sets aus `Umweltpsychologie_Fragenkatalog.md`:
+**Kern** (75 klausurrelevante Karten), **Vertiefung** (82) und **Randthemen** (20).
+Erzeugt werden sie mit `build_decks.py` aus dem Fragenkatalog — die Datei `decks.js`
+wird dabei komplett überschrieben, Änderungen also immer im Katalog vornehmen.
 
 ## Zwei Modi
 

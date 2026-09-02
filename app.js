@@ -38,25 +38,45 @@ function normalize(s) {
     .replace(/[^a-z0-9]+/g, " ")
     .trim();
 }
-function variantHit(variant, normInput, tokens) {
+/* Grober deutscher Wortstamm: schneidet eine Endung ab, längste zuerst.
+   „Bewertung" und „bewerte" landen so beide auf „bewert". */
+const SUFFIXE = ["ungen", "ung", "keiten", "keit", "heiten", "heit", "lichen", "liche",
+                 "lich", "ischen", "ische", "isch", "enden", "ende", "end", "ern", "est",
+                 "en", "er", "es", "em", "n", "s", "e"];
+function stamm(w) {
+  /* mehrfach schneiden, bis nichts mehr passt – sonst landen „tatsächliches"
+     und „tatsächlich" auf unterschiedlich tiefen Stämmen und treffen sich nicht */
+  for (let runde = 0; runde < 3; runde++) {
+    let vorher = w;
+    for (let i = 0; i < SUFFIXE.length; i++) {
+      const s = SUFFIXE[i];
+      if (w.length - s.length >= 4 && w.slice(-s.length) === s) { w = w.slice(0, w.length - s.length); break; }
+    }
+    if (w === vorher) break;
+  }
+  return w;
+}
+function stammText(tokens) { return tokens.map(stamm).join(" "); }
+
+function variantHit(variant, normInput, tokens, stammInput) {
   const parts = normalize(variant).split(" ").filter(Boolean);
   if (!parts.length) return false;
   return parts.every((p) => {
-    if (p.length <= 3) return tokens.indexOf(p) !== -1;           // sehr kurz: exakt
+    if (p.length <= 3) return tokens.indexOf(p) !== -1;                // sehr kurz: exakt
     if (p.length === 4) return tokens.some((t) => t.indexOf(p) === 0); // Wortanfang
-    if (normInput.indexOf(p) !== -1) return true;                 // Teilwort-Treffer
-    if (p.length >= 8) return normInput.indexOf(p.slice(0, p.length - 2)) !== -1; // Beugung
-    return false;
+    if (normInput.indexOf(p) !== -1) return true;                      // Teilwort-Treffer
+    return stammInput.indexOf(stamm(p)) !== -1;                        // über den Wortstamm
   });
 }
 function grade(card, input) {
   const groups = card.k && card.k.length ? card.k : autoKeywords(card.a);
   const normInput = normalize(input);
   const tokens = normInput.split(" ").filter(Boolean);
+  const stammInput = stammText(tokens);
   const answerWords = (card.a.match(/[A-Za-zÄÖÜäöüß0-9]+/g) || []);
   const detail = groups.map((g) => ({
     label: readableLabel(g[0], answerWords),
-    hit: g.some((v) => variantHit(v, normInput, tokens))
+    hit: g.some((v) => variantHit(v, normInput, tokens, stammInput))
   }));
   const hits = detail.filter((d) => d.hit).length;
   return { detail: detail, hits: hits, total: groups.length,
