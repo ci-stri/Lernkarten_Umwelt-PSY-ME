@@ -350,12 +350,23 @@ function flyOut(known) {
   card.style.transform = "translateX(" + (dir * window.innerWidth * 0.85) + "px)" +
                          " rotate(" + (dir * 16) + "deg) scale(.86)";
   card.style.opacity = "0";
+  aufleuchten(known);
+  /* Bewusste Pause, bevor die neue Karte aufsteigt: die alte ist nach
+     ~190ms weg, erst danach beginnt der nächste Auftritt. */
   setTimeout(() => {
     card.style.transition = "none";
     card.style.opacity = "1";
     rate(known);                                  // rendert die neue Karte
     requestAnimationFrame(() => { card.style.transition = ""; });
-  }, 170);
+  }, 330);
+}
+
+/* kurzer farbiger Lichtschein in Wischrichtung */
+function aufleuchten(known) {
+  const f = $("flash");
+  f.classList.remove("an", "flash-yes", "flash-no");
+  void f.offsetWidth;
+  f.classList.add("an", known ? "flash-yes" : "flash-no");
 }
 
 /* ============================================================
