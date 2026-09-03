@@ -1,19 +1,18 @@
 # Lernkarten – PWA
 
 Lernkarten aus CSV, offline im Browser. Kein Backend, kein Konto, keine Tracker.
-Die App ist nach **Dachthemen** gegliedert, jedes mit eigenen Kartensätzen:
+Die App hat zwei Ebenen: zuerst nur die **Dachthemen** zur Übersicht, darin
+dann die Kartensätze:
 
 - **Umweltpsychologie** — Kern (klausurrelevant), Vertiefung, Randthemen
 - **Umweltmediation** — Kern (klausurrelevant), Vertiefung, Randthemen
-- **Mathematik** — Grundformeln erkennen (Kegel, Kugel, Pyramide) und
-  Umstellen (sprechen): die Rechenschritte zum Umstellen einer Formel in
-  Worten erklären
+- **Eigene Sets** — per CSV importierte Sätze (erscheint erst, sobald eines importiert ist)
 
 Weitere Dachthemen kommen einfach dazu, ohne dass App-Code sich ändert.
-Erzeugt werden alle eingebauten Sets mit `build_decks.py` aus den jeweiligen
-Fragenkatalogen (`Umweltpsychologie_Fragenkatalog.md`, `Umweltmediation_Fragenkatalog.md`,
-`Mathematik_Fragenkatalog.md`) — die Datei `decks.js` wird dabei komplett
-überschrieben, Änderungen also immer im jeweiligen Katalog vornehmen.
+Erzeugt werden die eingebauten Sets mit `build_decks.py` aus den jeweiligen
+Fragenkatalogen (`Umweltpsychologie_Fragenkatalog.md`, `Umweltmediation_Fragenkatalog.md`)
+— die Datei `decks.js` wird dabei komplett überschrieben, Änderungen also immer
+im jeweiligen Katalog vornehmen.
 
 ## Zwei Modi
 
@@ -30,18 +29,12 @@ eingerechnet. Danach kommt die Musterantwort, und du bewertest selbst
 gewusst / nicht gewusst – dein Urteil zählt für den Fortschritt, die Begriffsprüfung ist
 nur das Feedback dazu.
 
-Für das Set „Umstellen (sprechen)" (Mathematik) ist genau dieser Schreib-Modus
-gedacht: statt der Formel mit Symbolen wird der Rechenweg in Worten diktiert
-oder getippt („Wurzel ziehen", „durch Pi teilen" …) – das lässt sich auf dem
-iPhone per Mikrofon-Taste sprechen und die App prüft die genannten
-Rechenschritte, nicht die Formel-Zeichen selbst.
-
 Der Fortschritt liegt pro Deck im `localStorage` des Browsers und bleibt erhalten,
 bis du ihn im Deck-Menü zurücksetzt.
 
 ## Eigene Sets importieren
 
-„CSV importieren" auf dem Startbildschirm. Erwartet werden zwei Spalten
+„CSV importieren" auf dem Startbildschirm (der Themen-Übersicht). Erwartet werden zwei Spalten
 (Frage, Antwort); Komma, Semikolon und Tab werden erkannt, eine Kopfzeile
 (`Frage,Antwort` / `Question,Answer` / `Term,Definition` …) wird automatisch
 übersprungen. Für importierte Sets werden die Kernbegriffe automatisch aus der
@@ -98,10 +91,10 @@ sonst zeigt das iPhone weiter die alte Version.
 ## Dateien
 
 ```
-index.html      Aufbau der vier Screens
+index.html      Aufbau der fünf Screens (Themen, Decks, Modus, Lernen, Ergebnis)
 styles.css      Dark-Theme, mobile-first
-app.js          Logik: Sitzung, Wischen, Bewertung, CSV-Import, Stichwortprüfung
-decks.js        Die beiden Kartensätze samt kuratierten Kernbegriffen
+app.js          Logik: Themen-/Deck-Navigation, Sitzung, Wischen, Bewertung, CSV-Import, Stichwortprüfung
+decks.js        Die eingebauten Kartensätze samt kuratierten Kernbegriffen
 manifest.json   PWA-Metadaten (Name, Farben, Icons)
 sw.js           Service Worker für den Offline-Betrieb
 icons/          App-Icons (192, 512, maskable, apple-touch)

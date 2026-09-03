@@ -392,40 +392,58 @@ function aufleuchten(known) {
 /* ============================================================
    Screens
    ============================================================ */
+function thema(d) { return d.thema || (d.custom ? "Eigene Sets" : "Weitere"); }
+function themenListe() {
+  const out = [];
+  allDecks().forEach((d) => { const t = thema(d); if (out.indexOf(t) === -1) out.push(t); });
+  return out;
+}
+
+let currentThema = null;
+
 function show(name) {
-  ["decks", "mode", "study", "result"].forEach((n) => {
+  ["themen", "decks", "mode", "study", "result"].forEach((n) => {
     $("screen-" + n).hidden = n !== name;
   });
+  if (name === "themen") renderThemen();
   if (name === "decks") renderDecks();
 }
 
+/* Oberste Ebene: nur die Dachthemen, damit die Übersicht bei vielen
+   Kartensätzen nicht unübersichtlich wird. */
+function renderThemen() {
+  const ul = $("thema-list");
+  ul.innerHTML = "";
+  const decks = allDecks();
+  const themen = themenListe();
+  themen.forEach((t) => {
+    const teil = decks.filter((d) => thema(d) === t);
+    const cardCount = teil.reduce((n, d) => n + d.cards.length, 0);
+    const li = document.createElement("li");
+    const b = document.createElement("button");
+    b.className = "deck";
+    b.innerHTML =
+      '<span class="deck-title">' + escapeHTML(t) + "</span>" +
+      '<span class="deck-meta"><span>' + teil.length + (teil.length === 1 ? " Set" : " Sets") + "</span>" +
+      "<span>" + cardCount + " Karten</span></span>";
+    b.addEventListener("click", () => { currentThema = t; show("decks"); });
+    li.appendChild(b);
+    ul.appendChild(li);
+  });
+  const totalCards = decks.reduce((n, d) => n + d.cards.length, 0);
+  $("themen-line").textContent = themen.length + (themen.length === 1 ? " Thema · " : " Themen · ") +
+                                 totalCards + " Karten · offline verfügbar";
+}
+
+/* Zweite Ebene: die Kartensätze innerhalb eines gewählten Dachthemas */
 function renderDecks() {
   const ul = $("deck-list");
   ul.innerHTML = "";
-  const decks = allDecks();
+  const decks = allDecks().filter((d) => thema(d) === currentThema);
+  if (!decks.length) { show("themen"); return; }
+  $("decks-head").textContent = currentThema;
 
-  /* nach Dachthema gruppieren – eingebaute Themen in ihrer Reihenfolge,
-     importierte Sets ganz unten */
-  const themen = [];
   decks.forEach((d) => {
-    const t = d.thema || (d.custom ? "Eigene Sets" : "Weitere");
-    if (themen.indexOf(t) === -1) themen.push(t);
-  });
-  let letztesThema = null;
-
-  decks.slice().sort((a, b) => {
-    const ta = themen.indexOf(a.thema || (a.custom ? "Eigene Sets" : "Weitere"));
-    const tb = themen.indexOf(b.thema || (b.custom ? "Eigene Sets" : "Weitere"));
-    return ta - tb;
-  }).forEach((d) => {
-    const thema = d.thema || (d.custom ? "Eigene Sets" : "Weitere");
-    if (thema !== letztesThema) {
-      const h = document.createElement("li");
-      h.className = "thema";
-      h.textContent = thema;
-      ul.appendChild(h);
-      letztesThema = thema;
-    }
     const st = deckState(d.id);
     const known = d.cards.filter((_, i) => st.results[i] === "yes").length;
     const again = d.cards.filter((_, i) => st.results[i] === "no").length;
@@ -456,8 +474,7 @@ function renderDecks() {
     ul.appendChild(li);
   });
   const cards = decks.reduce((n, d) => n + d.cards.length, 0);
-  $("streak-line").textContent = themen.length + (themen.length === 1 ? " Thema · " : " Themen · ") +
-                                 cards + " Karten · offline verfügbar";
+  $("decks-sub").textContent = decks.length + (decks.length === 1 ? " Set · " : " Sets · ") + cards + " Karten";
 }
 
 let pendingDeck = null;
@@ -466,7 +483,7 @@ function openDeck(d) {
   const st = deckState(d.id);
   const again = d.cards.filter((_, i) => st.results[i] === "no").length;
   const known = d.cards.filter((_, i) => st.results[i] === "yes").length;
-  $("mode-deck-name").textContent = (d.thema ? d.thema + " · " : "") + d.name;
+  $("mode-deck-name").textContent = d.name;
   $("mode-deck-meta").textContent =
     d.cards.length + " Karten · " + known + " gewusst · " + again + " nicht gewusst";
   $("again-count").textContent = again;
@@ -529,7 +546,7 @@ $("csv-input").addEventListener("change", (e) => {
     };
     customDecks.push(deck);
     save(LS.custom, customDecks);
-    renderDecks();
+    renderThemen();
     toast(cards.length + " Karten importiert");
   };
   rd.readAsText(file, "utf-8");
@@ -559,7 +576,7 @@ $("stage").addEventListener("touchmove", (e) => {
 window.LK = { grade: grade, cardsFromCSV: cardsFromCSV, decks: allDecks };
 
 /* Start */
-show("decks");
+show("themen");
 
 if ("serviceWorker" in navigator && location.protocol.indexOf("http") === 0) {
   window.addEventListener("load", () =>

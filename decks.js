@@ -338,40 +338,4 @@ window.BUILTIN_DECKS = [
 {q:"Welche Bedeutung haben Empathie und Zeit für die Haltung des Mediators?",a:"Empathie und Zeit werden vereinzelt als weitere Prinzipien der Mediation genannt, sind aber vorrangig als Rahmenbedingung bzw. grundsätzliche Haltung des Mediators anzusehen. Unter Empathie versteht man das einfühlsame und zurückhaltende Vorgehen des Mediators. Der Faktor Zeit weist darauf hin, dass Mediationsverfahren keine „Hau-Ruck-Verfahren\" sind: Verhandlungen sollen ohne Zeitdruck geführt werden, damit Erkenntnisse sacken und Lösungen sich entwickeln können.",k:[["Rahmenbedingung"], ["einfühlsam und zurückhaltend", "einfühlsam", "zurückhaltend"], ["kein Hau-Ruck-Verfahren", "Hau-Ruck-Verfahren"], ["ohne Zeitdruck", "Zeitdruck"]]},
   ]
 },
-{
-  id: "mathe-erkennen",
-  thema: "Mathematik",
-  name: "Grundformeln erkennen",
-  cards: [
-{q:"Kegel: Wie lautet der Zusammenhang zwischen Radius, Höhe und Mantellinie (Pythagoras)?",a:"r² + h² = s² (Radius zum Quadrat plus Höhe zum Quadrat ist gleich Mantellinie zum Quadrat).",k:[["Quadrat"], ["Mantellinie"]]},
-{q:"Kegel: Wie lautet die Formel für die Oberfläche?",a:"O = π · r² + π · r · s (Pi mal Radius zum Quadrat plus Pi mal Radius mal Mantellinie).",k:[["Mantellinie"], ["Quadrat"], ["Radius"]]},
-{q:"Kegel: Wie lautet die Formel für das Volumen?",a:"V = ⅓ · π · r² · h (ein Drittel mal Pi mal Radius zum Quadrat mal Höhe).",k:[["Drittel"], ["Quadrat"], ["Radius"], ["Höhe"]]},
-{q:"Kugel: Wie lautet die Formel für die Oberfläche?",a:"O = 4 · π · r² (vier mal Pi mal Radius zum Quadrat).",k:[["vier"], ["Quadrat"], ["Radius"]]},
-{q:"Kugel: Wie lautet die Formel für das Volumen?",a:"V = 4/3 · π · r³ (vier Drittel mal Pi mal Radius hoch drei).",k:[["Drittel"], ["Radius"], ["hoch drei"]]},
-{q:"Pyramide: Wie lautet der Zusammenhang zwischen halber Grundkante, Höhe und Seitenhöhe (Pythagoras)?",a:"(a/2)² + h² = ha² (halbe Grundkante zum Quadrat plus Höhe zum Quadrat ist gleich Seitenhöhe zum Quadrat).",k:[["Quadrat"], ["Seitenhöhe"]]},
-{q:"Pyramide: Wie lautet die Formel für die Oberfläche?",a:"O = a² + 2 · a · ha (Grundkante zum Quadrat plus zwei mal Grundkante mal Seitenhöhe).",k:[["Seitenhöhe"], ["Grundkante"], ["Quadrat"]]},
-{q:"Pyramide: Wie lautet die Formel für das Volumen?",a:"V = ⅓ · a² · h (ein Drittel mal Grundkante zum Quadrat mal Höhe).",k:[["Drittel"], ["Grundkante"], ["Quadrat"], ["Höhe"]]},
-  ]
-},
-{
-  id: "mathe-umstellen",
-  thema: "Mathematik",
-  name: "Umstellen (sprechen)",
-  cards: [
-{q:"Kegel – Pythagoras (r² + h² = s²): Wie stellt man die Gleichung nach s um?",a:"s steht schon im Quadrat allein auf einer Seite, also einfach auf beiden Seiten die Quadratwurzel ziehen: s = Wurzel aus r² + h².",k:[["Quadratwurzel ziehen", "Quadratwurzel", "ziehen"], ["allein stehen", "allein", "stehen"], ["Quadrat"], ["Wurzel"]]},
-{q:"Kegel – Pythagoras (r² + h² = s²): Wie stellt man die Gleichung nach r um?",a:"Zuerst h² auf die andere Seite bringen, also von s² subtrahieren, dann die Quadratwurzel ziehen: r = Wurzel aus s² minus h².",k:[["subtrahieren"], ["andere Seite bringen", "andere", "Seite", "bringen"], ["Quadratwurzel ziehen", "Quadratwurzel", "ziehen"], ["minus"]]},
-{q:"Kegel – Pythagoras (r² + h² = s²): Wie stellt man die Gleichung nach h um?",a:"Zuerst r² auf die andere Seite bringen, also von s² subtrahieren, dann die Quadratwurzel ziehen: h = Wurzel aus s² minus r².",k:[["subtrahieren"], ["andere Seite bringen", "andere", "Seite", "bringen"], ["Quadratwurzel ziehen", "Quadratwurzel", "ziehen"], ["minus"]]},
-{q:"Kegel – Oberfläche (O = π·r² + π·r·s): Wie stellt man die Gleichung nach s um?",a:"Zuerst π mal r² auf die andere Seite bringen, also von O subtrahieren, dann durch π mal r teilen: s = (O minus π mal r²) durch π mal r.",k:[["subtrahieren"], ["teilen"], ["andere Seite bringen", "andere", "Seite", "bringen"], ["Seite"]]},
-{q:"Kegel – Volumen (V = ⅓·π·r²·h): Wie stellt man die Gleichung nach h um?",a:"Beide Seiten mit drei multiplizieren und anschließend durch π mal r² teilen: h = drei mal V durch π mal r².",k:[["multiplizieren"], ["teilen"], ["drei mal"], ["beide Seiten", "beide", "Seiten"]]},
-{q:"Kegel – Volumen (V = ⅓·π·r²·h): Wie stellt man die Gleichung nach r um?",a:"Beide Seiten mit drei multiplizieren, durch π mal h teilen und anschließend die Quadratwurzel ziehen: r = Wurzel aus drei mal V durch π mal h.",k:[["multiplizieren"], ["Quadratwurzel ziehen", "Quadratwurzel", "ziehen"], ["teilen"], ["drei mal"]]},
-{q:"Kugel – Oberfläche (O = 4·π·r²): Wie stellt man die Gleichung nach r um?",a:"Beide Seiten durch vier mal π teilen, dann die Quadratwurzel ziehen: r = Wurzel aus O durch vier mal π.",k:[["Quadratwurzel ziehen", "Quadratwurzel", "ziehen"], ["teilen"], ["vier mal"], ["beide Seiten", "beide", "Seiten"]]},
-{q:"Kugel – Volumen (V = 4/3·π·r³): Wie stellt man die Gleichung nach r um?",a:"Beide Seiten mit drei multiplizieren, durch vier mal π teilen und anschließend die Kubikwurzel ziehen: r = Kubikwurzel aus drei mal V durch vier mal π.",k:[["Kubikwurzel ziehen", "Kubikwurzel", "ziehen"], ["multiplizieren"], ["teilen"], ["drei mal"]]},
-{q:"Pyramide – Pythagoras ((a/2)² + h² = ha²): Wie stellt man die Gleichung nach ha um?",a:"ha steht schon im Quadrat allein auf einer Seite, also einfach die Quadratwurzel ziehen: ha = Wurzel aus (a/2)² + h².",k:[["Quadratwurzel ziehen", "Quadratwurzel", "ziehen"], ["allein stehen", "allein", "stehen"], ["Quadrat"], ["Wurzel"]]},
-{q:"Pyramide – Pythagoras ((a/2)² + h² = ha²): Wie stellt man die Gleichung nach h um?",a:"Zuerst (a/2)² auf die andere Seite bringen, also von ha² subtrahieren, dann die Quadratwurzel ziehen: h = Wurzel aus ha² minus (a/2)².",k:[["subtrahieren"], ["andere Seite bringen", "andere", "Seite", "bringen"], ["Quadratwurzel ziehen", "Quadratwurzel", "ziehen"], ["minus"]]},
-{q:"Pyramide – Pythagoras ((a/2)² + h² = ha²): Wie stellt man die Gleichung nach a um?",a:"Zuerst h² von ha² subtrahieren, dann die Quadratwurzel ziehen — das ergibt a durch zwei — und zuletzt mit zwei multiplizieren: a = zwei mal Wurzel aus ha² minus h².",k:[["subtrahieren"], ["Quadratwurzel ziehen", "Quadratwurzel", "ziehen"], ["multiplizieren"], ["zwei mal"]]},
-{q:"Pyramide – Oberfläche (O = a² + 2·a·ha): Wie stellt man die Gleichung nach ha um?",a:"Zuerst a² auf die andere Seite bringen, also von O subtrahieren, dann durch zwei mal a teilen: ha = (O minus a²) durch zwei mal a.",k:[["subtrahieren"], ["teilen"], ["andere Seite bringen", "andere", "Seite", "bringen"], ["Seite"]]},
-{q:"Pyramide – Volumen (V = ⅓·a²·h): Wie stellt man die Gleichung nach h um?",a:"Beide Seiten mit drei multiplizieren und anschließend durch a² teilen: h = drei mal V durch a².",k:[["multiplizieren"], ["teilen"], ["drei mal"], ["beide Seiten", "beide", "Seiten"]]},
-{q:"Pyramide – Volumen (V = ⅓·a²·h): Wie stellt man die Gleichung nach a um?",a:"Beide Seiten mit drei multiplizieren, durch h teilen und anschließend die Quadratwurzel ziehen: a = Wurzel aus drei mal V durch h.",k:[["multiplizieren"], ["Quadratwurzel ziehen", "Quadratwurzel", "ziehen"], ["teilen"], ["drei mal"]]},
-  ]
-},
 ];

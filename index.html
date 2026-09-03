@@ -15,19 +15,31 @@
 </head>
 <body>
 
-<!-- ============ Deck-Auswahl ============ -->
-<section id="screen-decks" class="screen">
+<!-- ============ Themen-Auswahl (oberste Ebene) ============ -->
+<section id="screen-themen" class="screen">
   <header class="head">
     <h1>Lernkarten</h1>
-    <p class="sub" id="streak-line"></p>
+    <p class="sub" id="themen-line"></p>
   </header>
   <div class="scroll">
-    <ul id="deck-list" class="deck-list"></ul>
+    <ul id="thema-list" class="deck-list"></ul>
     <div class="import-box">
       <label class="btn btn-ghost btn-block" for="csv-input">CSV importieren</label>
       <input type="file" id="csv-input" accept=".csv,text/csv" hidden>
       <p class="hint">Zwei Spalten: Frage, Antwort. Kopfzeile wird automatisch erkannt.</p>
     </div>
+  </div>
+</section>
+
+<!-- ============ Deck-Auswahl innerhalb eines Themas ============ -->
+<section id="screen-decks" class="screen" hidden>
+  <header class="head">
+    <button class="back" data-back="themen" aria-label="Zurück">‹</button>
+    <h1 id="decks-head">Thema</h1>
+    <p class="sub" id="decks-sub"></p>
+  </header>
+  <div class="scroll">
+    <ul id="deck-list" class="deck-list"></ul>
   </div>
 </section>
 
