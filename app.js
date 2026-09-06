@@ -304,14 +304,14 @@ function inlineMarkup(s) {
    "Begriff | Erklaerung") werden als zweispaltige Tabelle gesetzt statt als
    Aufzaehlung - bei Karten, die mehrere Termini abfragen, ist das der
    entscheidende Unterschied beim schnellen Erfassen. */
-const DEF_RE = /^\*\*([^*]{1,42})\*\*(?:\s*[:=|]\s*|\s+[\u2013\u2014]\s+)(.+)$/;
+const DEF_RE = /^\*\*([^*]{1,42})\*\*\s*([:=|]|[\u2013\u2014])\s*(.+)$/;
 const PIPE_RE = /^([^|]{1,42})\|(.+)$/;
 function defParts(line) {
   const t = line.trim();
   let m = t.match(DEF_RE);
-  if (m) return [m[1].trim(), m[2].trim()];
+  if (m) return [m[1].trim(), m[3].trim(), m[2] === "|" ? "=" : m[2]];
   m = t.match(PIPE_RE);
-  if (m && m[1].trim()) return [m[1].replace(/\*\*/g, "").trim(), m[2].trim()];
+  if (m && m[1].trim()) return [m[1].replace(/\*\*/g, "").trim(), m[2].trim(), "="];
   return null;
 }
 
@@ -358,14 +358,33 @@ function renderMarkup(text) {
   const treffer = teile.filter(Boolean).length;
   const schlicht = !lines.some((l) => /^\s{2,}/.test(l) || /^\s*\d{1,2}\.\s/.test(l.trim()));
   if (treffer >= 2 && lines.length - treffer <= 2 && schlicht) {
-    let t = '<span class="mk-table">';
+    /* Kurze Begriffe passen in eine schmale erste Spalte und werden echt
+       zweispaltig gesetzt. Sobald ein Begriff laenger ist, wuerde diese Spalte
+       auf dem iPhone umbrechen - dann steht der Begriff fett vorne im Block,
+       die Erklaerung dahinter (Musterloesung von Ci). */
+    const spalte = teile.every((p) => !p || p[0].length <= 14);
+    if (spalte) {
+      let t = '<span class="mk-table">';
+      lines.forEach((l, i) => {
+        const p = teile[i];
+        if (p) {
+          t += '<span class="mk-term">' + inlineMarkup(p[0]) + "</span>" +
+               '<span class="mk-def">' + inlineMarkup(p[1]) + "</span>";
+        } else {
+          t += '<span class="mk-full">' + inlineMarkup(l.trim()) + "</span>";
+        }
+      });
+      return t + "</span>";
+    }
+    let t = '<span class="mk-blocks">';
     lines.forEach((l, i) => {
       const p = teile[i];
       if (p) {
-        t += '<span class="mk-term">' + inlineMarkup(p[0]) + "</span>" +
-             '<span class="mk-def">' + inlineMarkup(p[1]) + "</span>";
+        t += '<span class="mk-block"><b class="mk-bterm">' + inlineMarkup(p[0]) +
+             '</b><span class="mk-sep' + (p[2] === ":" ? " mk-sep-eng" : "") + '">' + escapeHTML(p[2]) + '</span><span class="mk-bdef">' +
+             inlineMarkup(p[1]) + "</span></span>";
       } else {
-        t += '<span class="mk-full">' + inlineMarkup(l.trim()) + "</span>";
+        t += '<span class="mk-block mk-note">' + inlineMarkup(l.trim()) + "</span>";
       }
     });
     return t + "</span>";
