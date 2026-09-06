@@ -159,6 +159,16 @@ body{
    abschneiden - der Rest laesst sich dann scrollen. */
 .card-face.randvoll{justify-content:flex-start}
 .card-face.randvoll .card-text{align-self:stretch}
+
+/* Lange Begriffe: fett vorne, Erklaerung dahinter, Bloecke deutlich getrennt */
+.mk-blocks{display:block;text-align:left;width:100%}
+.mk-block{display:block;margin:0 0 .85em}
+.mk-block:last-child{margin-bottom:0}
+.mk-bterm{font-weight:650;color:#fff}
+.mk-sep{color:var(--txt-dim);opacity:.75;margin:0 .35em}
+.mk-sep-eng{margin-left:0}
+.mk-note{color:var(--txt-dim)}
+.mk-bdef b{font-weight:650;color:#fff}
 .fb-answer .mk-body b,.fb-answer .mk-p b{display:inline;color:#fff;font-size:inherit;
   font-weight:650;text-transform:none;letter-spacing:normal;margin:0}
 
