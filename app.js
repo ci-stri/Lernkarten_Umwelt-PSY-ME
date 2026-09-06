@@ -69,11 +69,12 @@ function variantHit(variant, normInput, tokens, stammInput) {
   });
 }
 function grade(card, input) {
-  const groups = card.k && card.k.length ? card.k : autoKeywords(card.a);
+  const answerPlain = stripMarkup(card.a);
+  const groups = card.k && card.k.length ? card.k : autoKeywords(answerPlain);
   const normInput = normalize(input);
   const tokens = normInput.split(" ").filter(Boolean);
   const stammInput = stammText(tokens);
-  const answerWords = (card.a.match(/[A-Za-zÄÖÜäöüß0-9]+/g) || []);
+  const answerWords = (answerPlain.match(/[A-Za-zÄÖÜäöüß0-9]+/g) || []);
   const detail = groups.map((g) => ({
     label: readableLabel(g[0], answerWords),
     hit: g.some((v) => variantHit(v, normInput, tokens, stammInput))
@@ -188,8 +189,10 @@ function currentCard() { return S.deck.cards[S.queue[S.pos]]; }
 function renderCard() {
   if (S.pos >= S.queue.length) return finishRound();
   const c = currentCard();
-  $("card-q").textContent = c.q;
-  $("card-a").textContent = c.a;
+  $("card-q").innerHTML = renderMarkup(c.q);
+  $("card-a").innerHTML = renderMarkup(c.a);
+  fitCardText($("card-q"), c.q);
+  fitCardText($("card-a"), c.a);
   setFlipped(false);
   resetCardPosition();
   S.checked = false;
@@ -276,7 +279,7 @@ function checkWritten() {
   fb.innerHTML =
     '<p class="fb-score ' + cls + '">' + r.hits + " von " + r.total + " Kernbegriffen getroffen</p>" +
     '<div class="chips">' + chips + "</div>" +
-    '<p class="fb-answer"><b>Musterantwort</b>' + escapeHTML(c.a) + "</p>";
+    '<div class="fb-answer"><b>Musterantwort</b>' + renderMarkup(c.a) + "</div>";
   fb.hidden = false;
   $("btn-check").hidden = true;
   $("actions").hidden = false;
@@ -284,6 +287,104 @@ function checkWritten() {
   S.checked = true;
   fb.scrollIntoView({ behavior: "smooth", block: "nearest" });
 }
+/* ============================================================
+   Karten-Markup
+   Zeilenumbruch = Aufzählungspunkt · "1. " = nummeriert ·
+   zwei führende Leerzeichen = Unterpunkt · **fett** = Kernbegriff.
+   Eine einzelne Zeile bleibt ein normaler Absatz.
+   ============================================================ */
+function stripMarkup(s) {
+  return String(s).replace(/\*\*/g, "").replace(/\s*\|\s*/g, ": ");
+}
+function inlineMarkup(s) {
+  return escapeHTML(s).replace(/\*\*([^*]+)\*\*/g, "<b>$1</b>");
+}
+
+/* Begriff-Erklaerung-Zeilen ("**UV** = ...", "**Manipulation Check**: ...",
+   "Begriff | Erklaerung") werden als zweispaltige Tabelle gesetzt statt als
+   Aufzaehlung - bei Karten, die mehrere Termini abfragen, ist das der
+   entscheidende Unterschied beim schnellen Erfassen. */
+const DEF_RE = /^\*\*([^*]{1,42})\*\*(?:\s*[:=|]\s*|\s+[\u2013\u2014]\s+)(.+)$/;
+const PIPE_RE = /^([^|]{1,42})\|(.+)$/;
+function defParts(line) {
+  const t = line.trim();
+  let m = t.match(DEF_RE);
+  if (m) return [m[1].trim(), m[2].trim()];
+  m = t.match(PIPE_RE);
+  if (m && m[1].trim()) return [m[1].replace(/\*\*/g, "").trim(), m[2].trim()];
+  return null;
+}
+
+/* Listen linksbuendig setzen; die eigentliche Groesse regelt passeAn(). */
+function fitCardText(el, text) {
+  const lines = String(text == null ? "" : text).split("\n").filter((l) => l.trim() !== "").length;
+  el.classList.toggle("has-list", lines > 1);
+  el.classList.remove("t-s", "t-xs");
+  el.style.fontSize = "";
+  if (lines >= 7) el.classList.add("t-xs");
+  else if (lines >= 5) el.classList.add("t-s");
+  requestAnimationFrame(() => passeAn(el));
+}
+
+/* Frueher entschied allein die Zeilenzahl ueber die Schriftgroesse - lange
+   Zeilen liefen damit unten aus dem Bild. Jetzt wird gemessen und so lange
+   verkleinert, bis der Text wirklich auf die Karte passt. */
+function passeAn(el, versuch) {
+  const face = el.closest(".card-face");
+  if (!face) return;
+  if (face.clientHeight < 60) {
+    if ((versuch || 0) < 3) setTimeout(() => passeAn(el, (versuch || 0) + 1), 140);
+    return;
+  }
+  el.style.fontSize = "";
+  let size = parseFloat(getComputedStyle(el).fontSize);
+  const min = 11.5;
+  let schutz = 0;
+  while (face.scrollHeight > face.clientHeight + 1 && size > min && schutz++ < 60) {
+    size = Math.max(min, size - 0.5);
+    el.style.fontSize = size + "px";
+  }
+  face.classList.toggle("randvoll", face.scrollHeight > face.clientHeight + 1);
+}
+window.addEventListener("resize", () => {
+  document.querySelectorAll(".card-text").forEach((el) => passeAn(el));
+});
+
+function renderMarkup(text) {
+  const lines = String(text == null ? "" : text).split("\n").filter((l) => l.trim() !== "");
+  if (lines.length <= 1) return '<span class="mk-p">' + inlineMarkup((lines[0] || "").trim()) + "</span>";
+
+  const teile = lines.map(defParts);
+  const treffer = teile.filter(Boolean).length;
+  const schlicht = !lines.some((l) => /^\s{2,}/.test(l) || /^\s*\d{1,2}\.\s/.test(l.trim()));
+  if (treffer >= 2 && lines.length - treffer <= 2 && schlicht) {
+    let t = '<span class="mk-table">';
+    lines.forEach((l, i) => {
+      const p = teile[i];
+      if (p) {
+        t += '<span class="mk-term">' + inlineMarkup(p[0]) + "</span>" +
+             '<span class="mk-def">' + inlineMarkup(p[1]) + "</span>";
+      } else {
+        t += '<span class="mk-full">' + inlineMarkup(l.trim()) + "</span>";
+      }
+    });
+    return t + "</span>";
+  }
+
+  let html = "";
+  lines.forEach((l) => {
+    const sub = /^\s{2,}/.test(l) ? " mk-sub" : "";
+    const t = l.trim();
+    const num = t.match(/^(\d{1,2})\.\s+(.*)$/);
+    const pfeil = /^[\u2192\u2194\u21d2]/.test(t);   // Folgezeile "-> ..." bekommt keinen Punkt
+    const marker = num ? num[1] + "." : (pfeil ? "" : "\u00b7");
+    const body = num ? num[2] : t;
+    html += '<span class="mk-li' + sub + '"><span class="mk-marker">' + marker +
+            '</span><span class="mk-body">' + inlineMarkup(body) + "</span></span>";
+  });
+  return html;
+}
+
 function escapeHTML(s) {
   return String(s).replace(/[&<>"']/g, (c) =>
     ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
