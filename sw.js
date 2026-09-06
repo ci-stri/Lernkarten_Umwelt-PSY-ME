@@ -1,6 +1,6 @@
 /* Service Worker: App-Shell + Kartendaten offline vorhalten.
    CACHE bei jeder Änderung hochzählen, sonst hält sich die alte Version. */
-const CACHE = "lernkarten-v11-ot";
+const CACHE = "lernkarten-v12-tab";
 const ASSETS = [
   "./",
   "./index.html",
