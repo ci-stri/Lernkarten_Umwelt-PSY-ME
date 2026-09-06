@@ -9,10 +9,33 @@ dann die Kartensätze:
 - **Eigene Sets** — per CSV importierte Sätze (erscheint erst, sobald eines importiert ist)
 
 Weitere Dachthemen kommen einfach dazu, ohne dass App-Code sich ändert.
-Erzeugt werden die eingebauten Sets mit `build_decks.py` aus den jeweiligen
-Fragenkatalogen (`Umweltpsychologie_Fragenkatalog.md`, `Umweltmediation_Fragenkatalog.md`)
-— die Datei `decks.js` wird dabei komplett überschrieben, Änderungen also immer
-im jeweiligen Katalog vornehmen.
+
+## Woher die Karten kommen
+
+Quelle ist seit dem 05.09.2026 die Datei `../Kartenrevision/karten_gekuerzt.csv`
+(Spalten: ID, Thema, Kapitel, Prio, Frage, Antwort, Kernbegriffe, Notiz).
+`python3 ../build_decks_csv.py` schreibt daraus `decks.js` neu — Korrekturen also
+immer in die CSV, nie in `decks.js`. Danach `CACHE` in `sw.js` hochzählen,
+sonst hält das iPhone die alte Version.
+
+Die Fragenkataloge (`../Umweltpsychologie_Fragenkatalog.md`,
+`../Umweltmediation_Fragenkatalog.md`) bleiben das Nachschlagewerk mit den
+Langfassungen, Quellen und Folienangaben; die Kurzfassungen stehen dort
+zusätzlich unter `**Kurzfassung:**`. Der alte `../build_decks.py` ist abgelöst.
+
+## Markup auf den Karten
+
+Frage und Antwort dürfen ein schlankes Markup enthalten, das die App rendert:
+
+- **Zeilenumbruch** = eigener Aufzählungspunkt
+- `1. ` am Zeilenanfang = nummerierte Liste (für Reihenfolgen)
+- **zwei führende Leerzeichen** = eingerückter Unterpunkt
+- `**Text**` = fett, für die Kernbegriffe
+- eine Zeile, die mit `→` beginnt, bekommt keinen Aufzählungspunkt
+
+Eine Antwort aus nur einer Zeile bleibt ein normaler, zentrierter Absatz.
+In Numbers erzeugt man den Zeilenumbruch in der Zelle mit ⌥⏎; er übersteht
+den CSV-Export.
 
 ## Zwei Modi
 
