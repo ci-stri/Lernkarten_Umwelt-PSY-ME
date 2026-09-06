@@ -128,6 +128,40 @@ body{
     rgba(255,255,255,.045) 0 2px, transparent 2px 9px)}
 .card-text{margin:0;font-size:22px;line-height:1.4;text-align:center;letter-spacing:-.01em}
 .card-back .card-text{font-size:20px;color:#dbe6ff}
+
+/* ---------- Karten-Markup (Aufzählung, fette Kernbegriffe) ---------- */
+.mk-p{display:block}
+.mk-li{display:flex;gap:.5em;text-align:left;margin:.34em 0}
+.mk-li:first-child{margin-top:0}
+.mk-li:last-child{margin-bottom:0}
+.mk-marker{flex:0 0 auto;min-width:1.15em;color:var(--txt-dim);opacity:.7;
+  font-variant-numeric:tabular-nums}
+.mk-body{flex:1 1 auto;min-width:0}
+.mk-sub{margin-left:1.5em;font-size:.9em;opacity:.85}
+.mk-body b,.mk-p b{font-weight:650;color:#fff}
+.card-text.has-list{text-align:left;font-size:19px;align-self:stretch}
+.card-back .card-text.has-list{font-size:18px}
+.card-text.t-s{font-size:17px}
+.card-text.t-xs{font-size:15.5px;line-height:1.35}
+.write-mode .card-text.has-list{font-size:16px}
+
+/* ---------- Begriff-Tabelle (mehrere Termini auf einer Karte) ---------- */
+.mk-table{display:grid;grid-template-columns:fit-content(38%) minmax(0,1fr);
+  column-gap:.7em;width:100%;text-align:left}
+.mk-term,.mk-def,.mk-full{padding:.34em 0;
+  border-bottom:1px solid rgba(255,255,255,.09);min-width:0}
+.mk-term{font-weight:650;color:#fff;overflow-wrap:anywhere;-webkit-hyphens:auto;hyphens:auto}
+.mk-full{grid-column:1/-1}
+.mk-table > :nth-child(1),.mk-table > :nth-child(2){padding-top:0}
+.mk-table > :nth-last-child(-n+2){border-bottom:0;padding-bottom:0}
+.mk-def b,.mk-full b{font-weight:650;color:#fff}
+/* Passt der Text trotz Verkleinern nicht, oben anfangen statt mittig
+   abschneiden - der Rest laesst sich dann scrollen. */
+.card-face.randvoll{justify-content:flex-start}
+.card-face.randvoll .card-text{align-self:stretch}
+.fb-answer .mk-body b,.fb-answer .mk-p b{display:inline;color:#fff;font-size:inherit;
+  font-weight:650;text-transform:none;letter-spacing:normal;margin:0}
+
 .flip-hint{position:absolute;bottom:16px;font-size:12px;color:var(--txt-dim);opacity:.7}
 
 .stamp{position:absolute;top:38px;font:700 18px/1 inherit;padding:10px 14px;border-radius:12px;
@@ -163,8 +197,8 @@ textarea:focus{outline:2px solid var(--accent);outline-offset:-1px}
 .chip.miss{border-color:var(--no);color:var(--no)}
 .fb-answer{margin:0;color:#dbe6ff;font-size:15px;line-height:1.45;
   border-top:1px solid var(--line);padding-top:10px}
-.fb-answer b{display:block;color:var(--txt-dim);font-size:12px;font-weight:600;
-  text-transform:uppercase;letter-spacing:.05em;margin-bottom:4px}
+.fb-answer > b:first-child{display:block;color:var(--txt-dim);font-size:12px;font-weight:600;
+  text-transform:uppercase;letter-spacing:.05em;margin-bottom:6px}
 
 /* ---------- Ergebnis ---------- */
 .ring{width:140px;height:140px;border-radius:50%;display:grid;place-items:center;
